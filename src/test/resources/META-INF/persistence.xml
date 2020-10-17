@@ -1,0 +1,26 @@
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+             http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+             version="2.1">
+
+  <persistence-unit name="dao_test">
+    <class>com.goldenrealstate.todo.data.model.hibernate.BuildingEntity</class>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:dao_test;shutdown=true"/>
+      <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbc.JDBCDriver"/>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+      <property name="javax.persistence.schema-generation.database.action" value="create"/>
+    </properties>
+  </persistence-unit>
+
+  <persistence-unit name="goldenRealStateToDo">
+    <properties>
+      <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />
+      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost/tests" />
+      <property name="javax.persistence.jdbc.user" value="Sylvain" />
+      <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL95Dialect"/>
+    </properties>
+  </persistence-unit>
+
+</persistence>

@@ -5,6 +5,7 @@ import com.goldenrealstate.todo.data.client.PersonClient;
 import com.goldenrealstate.todo.webapp.models.Id;
 import com.goldenrealstate.todo.webapp.models.person.Person;
 
+import java.util.Collection;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -34,7 +35,13 @@ public final class PersonResource {
   @Path("{" + PERSON_ID + "}")
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public Person getBuilding(@PathParam(PERSON_ID) String id) {
+  public Person getPerson(@PathParam(PERSON_ID) String id) {
     return personClient.get(id);
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  public Collection<Person> getPersons() {
+    return personClient.getAll();
   }
 }

@@ -5,6 +5,7 @@ import com.goldenrealstate.todo.data.client.ClientFactory;
 import com.goldenrealstate.todo.webapp.models.Id;
 import com.goldenrealstate.todo.webapp.models.building.Building;
 
+import java.util.Collection;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -36,5 +37,11 @@ public final class BuildingResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Building getBuilding(@PathParam(BUILDING_ID) String id) {
     return buildingClient.get(id);
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  public Collection<Building> getBuildings() {
+    return buildingClient.getAll();
   }
 }

@@ -4,6 +4,7 @@ import com.goldenrealstate.todo.data.client.NotFoundException;
 import com.goldenrealstate.todo.data.client.PersonClient;
 import com.goldenrealstate.todo.webapp.models.person.Person;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -34,5 +35,10 @@ public final class PersonClientMock implements PersonClient {
       throw new NotFoundException("Person with id " + id + " not found");
     }
     return building;
+  }
+
+  @Override
+  public Collection<Person> getAll() {
+    return cache.values();
   }
 }

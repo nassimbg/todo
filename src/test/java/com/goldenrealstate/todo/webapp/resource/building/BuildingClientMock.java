@@ -4,6 +4,7 @@ import com.goldenrealstate.todo.data.client.BuildingClient;
 import com.goldenrealstate.todo.data.client.NotFoundException;
 import com.goldenrealstate.todo.webapp.models.building.Building;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -34,5 +35,10 @@ public final class BuildingClientMock implements BuildingClient {
       throw new NotFoundException("Building with id " + id + " not found");
     }
     return building;
+  }
+
+  @Override
+  public Collection<Building> getAll() {
+    return cache.values();
   }
 }

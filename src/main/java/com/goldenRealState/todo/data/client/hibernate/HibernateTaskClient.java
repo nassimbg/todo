@@ -7,12 +7,16 @@ import com.goldenrealstate.todo.data.model.hibernate.PersonEntity;
 import com.goldenrealstate.todo.data.model.hibernate.TaskEntity;
 import com.goldenrealstate.todo.webapp.models.task.Task;
 
+import java.util.Collection;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 
 import static com.goldenrealstate.todo.data.client.hibernate.HibernateUtil.executeWriteInTransaction;
+import static com.goldenrealstate.todo.data.client.hibernate.HibernateUtil.getAllQuery;
 import static com.goldenrealstate.todo.data.client.hibernate.HibernateUtil.toUUID;
 
 public final class HibernateTaskClient implements TaskClient {
@@ -58,6 +62,15 @@ public final class HibernateTaskClient implements TaskClient {
   @Override
   public Task get(final String id) throws NotFoundException {
     return toModel(getOrElseThrow(id));
+  }
+
+  @Override
+  public Collection<Task> getAll() {
+    TypedQuery<TaskEntity> allQuery = getAllQuery(TaskEntity.class, em);
+    return allQuery.getResultList()
+        .stream()
+        .map(HibernateTaskClient::toModel)
+        .collect(Collectors.toList());
   }
 
   private static TaskEntity toHibernate(Task task) {

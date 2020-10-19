@@ -5,11 +5,15 @@ import com.goldenrealstate.todo.data.client.PersonClient;
 import com.goldenrealstate.todo.data.model.hibernate.PersonEntity;
 import com.goldenrealstate.todo.webapp.models.person.Person;
 
+import java.util.Collection;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 
 import static com.goldenrealstate.todo.data.client.hibernate.HibernateUtil.executeWriteInTransaction;
 import static com.goldenrealstate.todo.data.client.hibernate.HibernateUtil.findOrElseThrow;
+import static com.goldenrealstate.todo.data.client.hibernate.HibernateUtil.getAllQuery;
 
 public class HibernatePersonClient implements PersonClient {
 
@@ -41,6 +45,15 @@ public class HibernatePersonClient implements PersonClient {
   @Override
   public Person get(final String id) throws NotFoundException {
     return toModel(findOrElseThrow(em, entityClass, id, NOT_FOUND_ERROR_MSG));
+  }
+
+  @Override
+  public Collection<Person> getAll() {
+    TypedQuery<PersonEntity> allQuery = getAllQuery(PersonEntity.class, em);
+    return allQuery.getResultList()
+        .stream()
+        .map(HibernatePersonClient::toModel)
+        .collect(Collectors.toList());
   }
 
   private static PersonEntity toHibernate(Person person) {

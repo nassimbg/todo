@@ -4,6 +4,7 @@ import com.goldenrealstate.todo.data.client.NotFoundException;
 import com.goldenrealstate.todo.data.client.TaskClient;
 import com.goldenrealstate.todo.webapp.models.task.Task;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -34,5 +35,10 @@ public final class TaskClientMock implements TaskClient {
       throw new NotFoundException("Task with id " + id + " not found");
     }
     return task;
+  }
+
+  @Override
+  public Collection<Task> getAll() {
+    return cache.values();
   }
 }

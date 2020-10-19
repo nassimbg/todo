@@ -5,11 +5,15 @@ import com.goldenrealstate.todo.data.client.NotFoundException;
 import com.goldenrealstate.todo.data.model.hibernate.BuildingEntity;
 import com.goldenrealstate.todo.webapp.models.building.Building;
 
+import java.util.Collection;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 
 import static com.goldenrealstate.todo.data.client.hibernate.HibernateUtil.executeWriteInTransaction;
 import static com.goldenrealstate.todo.data.client.hibernate.HibernateUtil.findOrElseThrow;
+import static com.goldenrealstate.todo.data.client.hibernate.HibernateUtil.getAllQuery;
 
 public class HibernateBuildingClient implements BuildingClient {
   private static final Function<String, String> NOT_FOUND_ERROR_MSG = id -> "Building with id '" + id + "' is not found";
@@ -40,6 +44,15 @@ public class HibernateBuildingClient implements BuildingClient {
   @Override
   public Building get(final String id) throws NotFoundException {
     return toModel(findOrElseThrow(em, entityClass, id, NOT_FOUND_ERROR_MSG));
+  }
+
+  @Override
+  public Collection<Building> getAll() {
+    TypedQuery<BuildingEntity> allQuery = getAllQuery(BuildingEntity.class, em);
+    return allQuery.getResultList()
+        .stream()
+        .map(HibernateBuildingClient::toModel)
+        .collect(Collectors.toList());
   }
 
   private static BuildingEntity toHibernate(Building building) {

@@ -19,6 +19,10 @@ import javax.persistence.OptimisticLockException;
 import javax.persistence.Persistence;
 import javax.persistence.PessimisticLockException;
 import javax.persistence.RollbackException;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 public final class HibernateUtil {
 
@@ -122,5 +126,14 @@ public final class HibernateUtil {
 
   static String toString(UUID id) {
     return id.toString();
+  }
+
+  static <T> TypedQuery<T> getAllQuery(Class<T> clazz, final EntityManager em) {
+    CriteriaBuilder cb = em.getCriteriaBuilder();
+    CriteriaQuery<T> cq = cb.createQuery(clazz);
+    Root<T> rootEntry = cq.from(clazz);
+    CriteriaQuery<T> all = cq.select(rootEntry);
+
+    return em.createQuery(all);
   }
 }

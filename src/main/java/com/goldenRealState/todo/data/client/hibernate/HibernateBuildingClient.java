@@ -5,13 +5,14 @@ import com.goldenrealstate.todo.data.client.NotFoundException;
 import com.goldenrealstate.todo.data.model.hibernate.BuildingEntity;
 import com.goldenrealstate.todo.webapp.models.building.Building;
 
+import java.util.function.Function;
 import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
 
 import static com.goldenrealstate.todo.data.client.hibernate.HibernateUtil.executeWriteInTransaction;
-import static com.goldenrealstate.todo.data.client.hibernate.HibernateUtil.toUUID;
+import static com.goldenrealstate.todo.data.client.hibernate.HibernateUtil.findOrElseThrow;
 
 public class HibernateBuildingClient implements BuildingClient {
+  private static final Function<String, String> NOT_FOUND_ERROR_MSG = id -> "Building with id '" + id + "' is not found";
 
   private final EntityManager em;
   private final Class<BuildingEntity> entityClass;
@@ -38,23 +39,14 @@ public class HibernateBuildingClient implements BuildingClient {
 
   @Override
   public Building get(final String id) throws NotFoundException {
-    return toDTO(getOrElseThrow(id));
+    return toModel(findOrElseThrow(em, entityClass, id, NOT_FOUND_ERROR_MSG));
   }
 
   private static BuildingEntity toHibernate(Building building) {
     return new BuildingEntity(building.getName());
   }
 
-  private BuildingEntity getOrElseThrow(final String id) {
-    final BuildingEntity buildingHibernate = HibernateUtil.executeReadInTransaction(() -> em.find(entityClass, toUUID(id), LockModeType.OPTIMISTIC), em);
-
-    if (buildingHibernate == null) {
-      throw new NotFoundException("building with id '" + id + "' is not found");
-    }
-    return buildingHibernate;
-  }
-
-  private static Building toDTO(BuildingEntity buildingHibernate) {
+  private static Building toModel(BuildingEntity buildingHibernate) {
     final Building building = new Building(buildingHibernate.getName());
 
     building.setId(HibernateUtil.toString(buildingHibernate.getId()));

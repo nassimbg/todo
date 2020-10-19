@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 public final class PathBuilder {
 
   public static final String BUILDINGS = "buildings";
+  public static final String PERSONS = "persons";
 
   private PathBuilder() {
     //do nothing

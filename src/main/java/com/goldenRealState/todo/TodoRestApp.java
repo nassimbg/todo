@@ -7,6 +7,7 @@ import com.goldenrealstate.todo.data.client.hibernate.HibernateUtil;
 import com.goldenrealstate.todo.webapp.DefaultExceptionMapper;
 import com.goldenrealstate.todo.webapp.NotFoundMapper;
 import com.goldenrealstate.todo.webapp.resource.building.BuildingResource;
+import com.goldenrealstate.todo.webapp.resource.person.PersonResource;
 
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.internal.inject.DisposableSupplier;
@@ -38,6 +39,7 @@ public class TodoRestApp extends ResourceConfig {
 
     // register Resources
     register(BuildingResource.class);
+    register(PersonResource.class);
   }
 
   @Provider

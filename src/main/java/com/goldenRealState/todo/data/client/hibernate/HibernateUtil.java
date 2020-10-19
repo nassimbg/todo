@@ -1,5 +1,7 @@
 package com.goldenrealstate.todo.data.client.hibernate;
 
+import com.goldenrealstate.todo.data.client.NotFoundException;
+
 import net.jodah.failsafe.Failsafe;
 import net.jodah.failsafe.RetryPolicy;
 
@@ -7,9 +9,11 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.LockModeType;
 import javax.persistence.LockTimeoutException;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.Persistence;
@@ -101,6 +105,15 @@ public final class HibernateUtil {
 
   private static <T> T execute(Supplier<T> f) {
     return f.get();
+  }
+
+  static <T> T findOrElseThrow(EntityManager em, Class<T> entityClass, final String id, Function<String, String> errorMsg) throws NotFoundException {
+    final T entity = HibernateUtil.executeReadInTransaction(() -> em.find(entityClass, toUUID(id), LockModeType.OPTIMISTIC), em);
+
+    if (entity == null) {
+      throw new NotFoundException(errorMsg.apply(id));
+    }
+    return entity;
   }
 
   static UUID toUUID(String id) {

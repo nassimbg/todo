@@ -13,8 +13,8 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 @Entity
-@Table(name = "TODO_BUILDINGS")
-public class BuildingEntity implements Serializable {
+@Table(name = "TODO_PERSON")
+public class PersonEntity implements Serializable {
 
   @Id
   @GeneratedValue(generator = "UUID")
@@ -25,18 +25,18 @@ public class BuildingEntity implements Serializable {
   @Column(name = "ID", updatable = false, nullable = false)
   private UUID id;
 
-  @Column(name = "NAME", length = 127)
-  private String name;
-
   @Version
   @Column(name = "VERSION")
   private long version;
 
-  public BuildingEntity(String name) {
+  @Column(name = "NAME", length = 127)
+  private String name;
+
+  public PersonEntity(String name) {
     this.name = name;
   }
 
-  public BuildingEntity() {
+  public PersonEntity() {
    //do nothing
   }
 
@@ -56,7 +56,7 @@ public class BuildingEntity implements Serializable {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    final BuildingEntity that = (BuildingEntity) o;
+    final PersonEntity that = (PersonEntity) o;
     return version == that.version &&
         Objects.equals(id, that.id) &&
         Objects.equals(name, that.name);
@@ -64,6 +64,6 @@ public class BuildingEntity implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, version);
+    return Objects.hash(id, version, name);
   }
 }

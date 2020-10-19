@@ -5,4 +5,6 @@ public interface ClientFactory {
   BuildingClient getBuildingClient();
 
   PersonClient getPersonClient();
+
+  TaskClient getTaskClient();
 }

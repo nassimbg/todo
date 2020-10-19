@@ -8,6 +8,7 @@ import com.goldenrealstate.todo.webapp.DefaultExceptionMapper;
 import com.goldenrealstate.todo.webapp.NotFoundMapper;
 import com.goldenrealstate.todo.webapp.resource.building.BuildingResource;
 import com.goldenrealstate.todo.webapp.resource.person.PersonResource;
+import com.goldenrealstate.todo.webapp.resource.task.TaskResource;
 
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 import org.glassfish.jersey.internal.inject.DisposableSupplier;
@@ -40,6 +41,7 @@ public class TodoRestApp extends ResourceConfig {
     // register Resources
     register(BuildingResource.class);
     register(PersonResource.class);
+    register(TaskResource.class);
   }
 
   @Provider

@@ -7,6 +7,7 @@
   <persistence-unit name="dao_test">
     <class>com.goldenrealstate.todo.data.model.hibernate.BuildingEntity</class>
     <class>com.goldenrealstate.todo.data.model.hibernate.PersonEntity</class>
+    <class>com.goldenrealstate.todo.data.model.hibernate.TaskEntity</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:dao_test;shutdown=true"/>
       <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbc.JDBCDriver"/>

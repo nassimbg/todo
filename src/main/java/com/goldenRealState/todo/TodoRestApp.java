@@ -4,6 +4,8 @@ import com.goldenrealstate.todo.data.client.ClientFactory;
 import com.goldenrealstate.todo.data.client.hibernate.ClientFactoryProvider;
 import com.goldenrealstate.todo.data.client.hibernate.EntityManagerProvider;
 import com.goldenrealstate.todo.data.client.hibernate.HibernateUtil;
+import com.goldenrealstate.todo.webapp.DefaultExceptionMapper;
+import com.goldenrealstate.todo.webapp.NotFoundMapper;
 import com.goldenrealstate.todo.webapp.resource.building.BuildingResource;
 
 import org.glassfish.jersey.internal.inject.AbstractBinder;
@@ -22,6 +24,8 @@ public class TodoRestApp extends ResourceConfig {
   public TodoRestApp() {
     // register Features
     register(JacksonFeature.class);
+    register(NotFoundMapper.class);
+    register(DefaultExceptionMapper.class);
 
     register(new AbstractBinder() {
       @Override
@@ -29,7 +33,6 @@ public class TodoRestApp extends ResourceConfig {
         bindFactory(JPAResolver.class).to(EntityManagerFactory.class).in(Singleton.class);
         bindFactory(EntityManagerProvider.class).to(EntityManager.class).in(RequestScoped.class);
         bindFactory(ClientFactoryProvider.class).to(ClientFactory.class).in(RequestScoped.class);
-
       }
     });
 

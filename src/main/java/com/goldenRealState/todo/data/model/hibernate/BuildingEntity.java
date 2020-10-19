@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 @Entity
 @Table(name = "TODO_BUILDINGS")
@@ -27,6 +28,10 @@ public class BuildingEntity implements Serializable {
   @Column(name = "NAME", length = 127)
   private String name;
 
+  @Version
+  @Column(name = "VERSION")
+  private long version;
+
   public BuildingEntity(String name) {
     this.name = name;
   }
@@ -39,6 +44,10 @@ public class BuildingEntity implements Serializable {
     return id;
   }
 
+  public String getName() {
+    return name;
+  }
+
   @Override
   public boolean equals(final Object o) {
     if (this == o) {
@@ -48,12 +57,13 @@ public class BuildingEntity implements Serializable {
       return false;
     }
     final BuildingEntity that = (BuildingEntity) o;
-    return Objects.equals(id, that.id) &&
+    return version == that.version &&
+        Objects.equals(id, that.id) &&
         Objects.equals(name, that.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name);
+    return Objects.hash(id, name, version);
   }
 }

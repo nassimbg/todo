@@ -16,7 +16,6 @@
     <log4j.version>2.13.3</log4j.version>
   </properties>
 
-
   <build>
     <plugins>
       <plugin>
@@ -40,7 +39,6 @@
       </plugin>
     </plugins>
   </build>
-
   <dependencies>
 
     <dependency>

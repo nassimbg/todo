@@ -58,7 +58,7 @@ class HibernatePersonClientTest {
     });
   }
 
-  private Person postPersonAndAssert(final HibernatePersonClient hibernatePersonClient, String name) {
+  public static Person postPersonAndAssert(final HibernatePersonClient hibernatePersonClient, String name) {
     final Person person = new Person(name);
     final String id = hibernatePersonClient.post(person);
 

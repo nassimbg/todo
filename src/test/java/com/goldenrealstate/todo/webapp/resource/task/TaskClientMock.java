@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public final class TaskClientMock implements TaskClient {
 
@@ -40,5 +41,20 @@ public final class TaskClientMock implements TaskClient {
   @Override
   public Collection<Task> getAll() {
     return cache.values();
+  }
+
+  @Override
+  public Collection<Task> getAll(final String assigneeId, final String buildingId) {
+    final boolean isAssigneeIdNull = isNullOrEmpty(assigneeId);
+    final boolean isBuildingIdNull = isNullOrEmpty(buildingId);
+    return getAll()
+        .stream()
+        .filter(task -> (isAssigneeIdNull || assigneeId.equals(task.getAssigneeId())) &&
+            (isBuildingIdNull || buildingId.equals(task.getBuildingId())))
+        .collect(Collectors.toList());
+  }
+
+  private static boolean isNullOrEmpty(String s) {
+    return s == null || s.isEmpty();
   }
 }

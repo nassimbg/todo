@@ -22,6 +22,7 @@ import javax.persistence.RollbackException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
 
 public final class HibernateUtil {
@@ -129,11 +130,16 @@ public final class HibernateUtil {
   }
 
   static <T> TypedQuery<T> getAllQuery(Class<T> clazz, final EntityManager em) {
+
     CriteriaBuilder cb = em.getCriteriaBuilder();
     CriteriaQuery<T> cq = cb.createQuery(clazz);
     Root<T> rootEntry = cq.from(clazz);
-    CriteriaQuery<T> all = cq.select(rootEntry);
+    CriteriaQuery<T> query = cq.select(rootEntry);
 
-    return em.createQuery(all);
+    return em.createQuery(query);
+  }
+
+  static boolean isNullOrEmpty(String s) {
+    return s == null || s.isEmpty();
   }
 }

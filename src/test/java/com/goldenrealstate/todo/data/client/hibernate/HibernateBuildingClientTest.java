@@ -56,7 +56,7 @@ class HibernateBuildingClientTest {
     });
   }
 
-  private Building postBuildingAndAssert(final HibernateBuildingClient hibernateBuildingClient, String name) {
+  public static Building postBuildingAndAssert(final HibernateBuildingClient hibernateBuildingClient, String name) {
     final Building building = new Building(name);
 
     final String id = hibernateBuildingClient.post(building);

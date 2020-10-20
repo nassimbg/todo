@@ -7,21 +7,31 @@ import com.goldenrealstate.todo.data.model.hibernate.PersonEntity;
 import com.goldenrealstate.todo.data.model.hibernate.TaskEntity;
 import com.goldenrealstate.todo.webapp.models.task.Task;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import static com.goldenrealstate.todo.data.client.hibernate.HibernateUtil.executeWriteInTransaction;
-import static com.goldenrealstate.todo.data.client.hibernate.HibernateUtil.getAllQuery;
+import static com.goldenrealstate.todo.data.client.hibernate.HibernateUtil.isNullOrEmpty;
 import static com.goldenrealstate.todo.data.client.hibernate.HibernateUtil.toUUID;
 
 public final class HibernateTaskClient implements TaskClient {
 
   private static final String ID = "id";
+  private static final String PERSON_REF_FIELD = "person";
+  private static final String BUILDING_REF_FIELD = "building";
+
   private static final String FETCH_QUERY =
         "select t "
       + "from todo_task t "
@@ -66,7 +76,38 @@ public final class HibernateTaskClient implements TaskClient {
 
   @Override
   public Collection<Task> getAll() {
-    TypedQuery<TaskEntity> allQuery = getAllQuery(TaskEntity.class, em);
+    return getAll(null, null);
+  }
+
+  @Override
+  public Collection<Task> getAll(final String assigneeId, final String buildingId) {
+    CriteriaBuilder cb = em.getCriteriaBuilder();
+    CriteriaQuery<TaskEntity> cq = cb.createQuery(entityClass);
+    Root<TaskEntity> rootEntry = cq.from(entityClass);
+
+    List<Predicate> conditions = new ArrayList<>();
+    createJoinOnIdCondition(assigneeId, cb, rootEntry, conditions, PERSON_REF_FIELD);
+    createJoinOnIdCondition(buildingId, cb, rootEntry, conditions, BUILDING_REF_FIELD);
+
+    CriteriaQuery<TaskEntity> query = cq.select(rootEntry);
+
+    if(!conditions.isEmpty()) {
+      query = query.where(conditions.toArray(new Predicate[0]));
+    }
+
+    return toModel(em.createQuery(query));
+  }
+
+  private static void createJoinOnIdCondition(final String id, final CriteriaBuilder cb,
+      final Root<TaskEntity> rootEntry, final List<Predicate> conditions, final String fieldName) {
+    if (!isNullOrEmpty(id)) {
+      final Join personJoin = Join.class.cast(rootEntry.fetch(fieldName));
+
+      conditions.add(cb.equal(personJoin.get(HibernateTaskClient.ID), toUUID(id)));
+    }
+  }
+
+  private List<Task> toModel(final TypedQuery<TaskEntity> allQuery) {
     return allQuery.getResultList()
         .stream()
         .map(HibernateTaskClient::toModel)

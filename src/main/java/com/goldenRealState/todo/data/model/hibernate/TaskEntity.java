@@ -75,6 +75,18 @@ public class TaskEntity implements Serializable {
     this.building = building;
   }
 
+  public void setId(final UUID id) {
+    this.id = id;
+  }
+
+  public void setVersion(final long version) {
+    this.version = version;
+  }
+
+  public long getVersion() {
+    return version;
+  }
+
   public PersonEntity getPerson() {
     return person;
   }

@@ -77,6 +77,30 @@ class HibernateTaskClientTest {
   }
 
   @Test
+  void shouldPostToExistingTask() {
+    withEntityManager(em -> {
+      final HibernateTaskClient hibernateTaskClient = HibernateTaskClient.create(em);
+      final HibernatePersonClient hibernatePersonClient = HibernatePersonClient.create(em);
+      final Person person = HibernatePersonClientTest.postPersonAndAssert(hibernatePersonClient, "person 1");
+
+      final HibernateBuildingClient hibernateBuildingClient = HibernateBuildingClient.create(em);
+      final Building building = HibernateBuildingClientTest.postBuildingAndAssert(hibernateBuildingClient, "building 1");
+
+      final Task task = postGetAndAssertTask(hibernateTaskClient, person, building);
+      task.setStatus(Status.DONE);
+
+      hibernateTaskClient.put(task.getId(), task);
+
+      final Task retrievedTask = hibernateTaskClient.get(task.getId());
+
+      assertEquals("task 1", retrievedTask.getName());
+      assertEquals(building.getId(), retrievedTask.getBuildingId());
+      assertEquals(person.getId(), retrievedTask.getAssigneeId());
+      assertEquals(Status.DONE, retrievedTask.getStatus());
+    });
+  }
+
+  @Test
   void shouldGetAllExistingTasks() {
     withEntityManager(em -> {
       final HibernateTaskClient hibernateTaskClient = HibernateTaskClient.create(em);
@@ -185,7 +209,7 @@ class HibernateTaskClientTest {
     return task;
   }
 
-  private void postGetAndAssertTask(final HibernateTaskClient hibernateTaskClient, final Person person,
+  private Task postGetAndAssertTask(final HibernateTaskClient hibernateTaskClient, final Person person,
       final Building building) {
     final Task task = postTaskAndAssert(hibernateTaskClient, "task 1", person, building);
 
@@ -195,5 +219,7 @@ class HibernateTaskClientTest {
     assertEquals(building.getId(), retrievedTask.getBuildingId());
     assertEquals(person.getId(), retrievedTask.getAssigneeId());
     assertEquals(Status.NOT_STARTED, retrievedTask.getStatus());
+
+    return retrievedTask;
   }
 }

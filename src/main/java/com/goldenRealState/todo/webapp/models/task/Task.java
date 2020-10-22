@@ -8,7 +8,7 @@ public final class Task {
 
   private String id;
   private final String name;
-  private final Status status;
+  private Status status;
   private String assigneeId;
   private String buildingId;
 
@@ -38,6 +38,10 @@ public final class Task {
 
   public void setAssigneeId(final String assigneeId) {
     this.assigneeId = assigneeId;
+  }
+
+  public void setStatus(final Status status) {
+    this.status = status;
   }
 
   public void setBuildingId(final String buildingId) {

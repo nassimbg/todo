@@ -7,4 +7,6 @@ import java.util.Collection;
 public interface TaskClient extends Client<Task, String> {
 
   Collection<Task> getAll(String assigneeId, String buildingId);
+
+  void put(String id, Task task);
 }

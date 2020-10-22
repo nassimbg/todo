@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
@@ -53,20 +54,7 @@ public final class HibernateTaskClient implements TaskClient {
 
   @Override
   public String post(final Task ob) {
-    final TaskEntity taskEntity = toHibernate(ob);
-
-    return executeWriteInTransaction(() -> {
-      final PersonEntity assignee = em.getReference(PersonEntity.class, toUUID(ob.getAssigneeId()));
-      final BuildingEntity assignedBuilding = em.getReference(BuildingEntity.class, toUUID(ob.getBuildingId()));
-
-      taskEntity.setBuilding(assignedBuilding);
-      taskEntity.setPerson(assignee);
-      taskEntity.setStatus(ob.getStatus());
-
-      em.persist(taskEntity);
-
-      return taskEntity.getId().toString();
-    }, em);
+    return writeTask(ob, em::persist);
   }
 
   @Override
@@ -98,6 +86,28 @@ public final class HibernateTaskClient implements TaskClient {
     return toModel(em.createQuery(query));
   }
 
+  @Override
+  public void put(final String id, final Task task) {
+    task.setId(id);
+    writeTask(task, taskEntity -> {
+      taskEntity.setId(toUUID(id));
+
+      final TaskEntity persistedEntity = getOrElseThrow(id);
+      taskEntity.setVersion(persistedEntity.getVersion());
+      em.merge(taskEntity);
+    });
+  }
+
+  private String writeTask(final Task task, Consumer<TaskEntity> writer) {
+    return executeWriteInTransaction(() -> {
+      final TaskEntity taskEntity = prepareEntity(task);
+
+      writer.accept(taskEntity);
+
+      return taskEntity.getId().toString();
+    }, em);
+  }
+
   private static void createJoinOnIdCondition(final String id, final CriteriaBuilder cb,
       final Root<TaskEntity> rootEntry, final List<Predicate> conditions, final String fieldName) {
     if (!isNullOrEmpty(id)) {
@@ -115,7 +125,9 @@ public final class HibernateTaskClient implements TaskClient {
   }
 
   private static TaskEntity toHibernate(Task task) {
-    return new TaskEntity(task.getName());
+    final TaskEntity taskEntity = new TaskEntity(task.getName());
+    taskEntity.setStatus(task.getStatus());
+    return taskEntity;
   }
 
   private TaskEntity getOrElseThrow(final String id) {
@@ -131,6 +143,16 @@ public final class HibernateTaskClient implements TaskClient {
         .setParameter(ID, id)
         .setLockMode(LockModeType.OPTIMISTIC)
         .getSingleResult();
+  }
+
+  private TaskEntity prepareEntity(final Task ob) {
+    final TaskEntity taskEntity = toHibernate(ob);
+    final PersonEntity assignee = em.getReference(PersonEntity.class, toUUID(ob.getAssigneeId()));
+    final BuildingEntity assignedBuilding = em.getReference(BuildingEntity.class, toUUID(ob.getBuildingId()));
+
+    taskEntity.setBuilding(assignedBuilding);
+    taskEntity.setPerson(assignee);
+    return taskEntity;
   }
 
   private static Task toModel(TaskEntity taskEntity) {

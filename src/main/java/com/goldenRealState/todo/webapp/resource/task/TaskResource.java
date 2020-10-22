@@ -6,8 +6,10 @@ import com.goldenrealstate.todo.webapp.models.Id;
 import com.goldenrealstate.todo.webapp.models.task.Task;
 
 import java.util.Collection;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -44,5 +46,12 @@ public final class TaskResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Collection<Task> getTasks(@QueryParam("assignee_id") String assigneeId, @QueryParam("building_id") String buildingId) {
     return taskClient.getAll(assigneeId, buildingId);
+  }
+
+  @PUT
+  @Path("{" + TASK_ID + "}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public void updateTask(@PathParam(TASK_ID) String id, Task task){
+    taskClient.put(id, task);
   }
 }

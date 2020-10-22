@@ -54,6 +54,11 @@ public final class TaskClientMock implements TaskClient {
         .collect(Collectors.toList());
   }
 
+  @Override
+  public void put(final String id, final Task task) {
+    cache.put(id, task);
+  }
+
   private static boolean isNullOrEmpty(String s) {
     return s == null || s.isEmpty();
   }

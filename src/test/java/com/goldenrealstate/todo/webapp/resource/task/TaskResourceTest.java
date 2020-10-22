@@ -56,6 +56,26 @@ public class TaskResourceTest extends AbstractJerseyTest {
   }
 
   @Test
+  public void testPutForExistingTask() {
+    final Task task = postAndAssertTask("-1155869325", "task 1");
+    assertEquals(Status.DONE, task.getStatus());
+
+    task.setStatus(Status.NOT_STARTED);
+
+    final Response putResponse = target(PathBuilder.buildPath(PathBuilder.TASKS, task.getId()))
+        .request(MediaType.APPLICATION_JSON_TYPE)
+        .put(Entity.entity(task, MediaType.APPLICATION_JSON_TYPE));
+
+    assertEquals(Response.Status.NO_CONTENT.getStatusCode(), putResponse.getStatus());
+
+    final Task retrievedTask = target(PathBuilder.buildPath(PathBuilder.TASKS, task.getId()))
+        .request(MediaType.APPLICATION_JSON_TYPE)
+        .get(Task.class);
+
+    assertEquals(task, retrievedTask);
+  }
+
+  @Test
   public void testGetForNonExistingTask() {
     final String id = "-1155869325";
 

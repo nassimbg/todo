@@ -8,7 +8,7 @@ export default class Fetcher {
     static _BUILDING = "building";
     static _TASK = "task";
 
-    static _SERVICE_URL = 'http://localhost:8080';
+    static _SERVICE_URL = '';
     static _TODO_API_BASE_URL = `${this._SERVICE_URL}/api/v1/todo/`;
     static _LINKS = [
         { rel: this._PERSON, href: "persons" },

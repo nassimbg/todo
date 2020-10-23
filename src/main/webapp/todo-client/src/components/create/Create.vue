@@ -1,18 +1,18 @@
 <template>
-  <section>
+  <section class="h-90">
     <nav class="nav nav-pills nav-fill navbar-dark bg-dark">
       <a class="nav-item nav-link tab" data-toggle="tab" href="#person" aria-controls="person" aria-selected="true" v-bind:class="{ 'active': _isActive(1) }">Person</a>
       <a class="nav-item nav-link tab" data-toggle="tab" href="#building" aria-controls="building" aria-selected="false" v-bind:class="{ 'active': _isActive(2) }">Building</a>
       <a class="nav-item nav-link tab" data-toggle="tab" href="#task" aria-controls="task" aria-selected="false" v-bind:class="{ 'active': _isActive(3)}">Task</a>
     </nav>
-    <div class="tab-content" id="CreateTabs">
-      <div class="tab-pane fade" id="person" role="tabpanel" aria-labelledby="person-tab" v-bind:class="{ 'active': _isActive(1),  'show': _isActive(1)}">
+    <div class="tab-content h-100 row" id="CreateTabs">
+      <div class="tab-pane fade align-self-center w-100" id="person" role="tabpanel" aria-labelledby="person-tab" v-bind:class="{ 'active': _isActive(1),  'show': _isActive(1)}">
         <CreatePerson/>
       </div>
-      <div class="tab-pane fade" id="building" role="tabpanel" aria-labelledby="building-tab" v-bind:class="{ 'active': _isActive(2), 'show': _isActive(2)}">
+      <div class="tab-pane fade align-self-center w-100" id="building" role="tabpanel" aria-labelledby="building-tab" v-bind:class="{ 'active': _isActive(2), 'show': _isActive(2)}">
         <CreateBuilding/>
       </div>
-      <div class="tab-pane fade" id="task" role="tabpanel" aria-labelledby="task-tab" v-bind:class="{ 'active': _isActive(3),  'show': _isActive(3)}">
+      <div class="tab-pane fade align-self-center w-100" id="task" role="tabpanel" aria-labelledby="task-tab" v-bind:class="{ 'active': _isActive(3),  'show': _isActive(3)}">
         <CreateTask/>
       </div>
     </div>
@@ -42,10 +42,6 @@ export default {
   watch: {
     /* eslint-disable no-unused-vars */
     $route(to, from) {
-          /* eslint-disable no-debugger */
-debugger
-/* eslint-enable no-debugger */
-
       this.intiallySelected = parseInt(to.params.type);
     }
     /* eslint-enable no-unused-vars */
@@ -55,6 +51,9 @@ debugger
 
 <style>
 
+.h-90{
+  height: 90%;
+}
 .tab-content {
     width: 50%;
     margin: auto;

@@ -1,5 +1,6 @@
 import BuildingContainer from "../container/building-container";
 import PersonContainer from "../container/person-container";
+import TaskContainer from "../container/task-container";
 
 export default class Fetcher {
 
@@ -42,6 +43,37 @@ export default class Fetcher {
             .then(buildings => buildings.map(p => new BuildingContainer(p)));
     }
 
+    static getTasks(assigneeId, buildingId) {
+        let link = this._getLink(this._TASK);
+
+        let numberOfQueryParams = assigneeId ? 1 : 0;
+        numberOfQueryParams += buildingId ? 1 : 0;
+        
+        if (numberOfQueryParams > 0) {
+            link += '?';
+        }
+
+        if (assigneeId) {
+            link += 'assignee_id=' + assigneeId;
+        }
+
+        if (numberOfQueryParams > 1) {
+            link += '&';
+        }
+
+        if (buildingId) {
+            link += 'building_id='+ buildingId;
+        }
+
+        return this._get(link)
+        .then(tasks => tasks.map(t => new TaskContainer(t)));
+    }
+
+    static putTask(taskContainer) {
+        let link = this._getLink(this._TASK) + '/' + taskContainer.getId();
+        this._put(link, taskContainer.toJSON())
+    }
+
     static _getLink(rel) {
         return this._TODO_API_BASE_URL + this._parseLink(rel);
     }
@@ -52,9 +84,17 @@ export default class Fetcher {
     }
 
     static _post(link, ob) {
+        return this._write(link, ob, "POST");
+    }
+
+    static _put(link, ob) {
+        return this._write(link, ob, "PUT");
+    }
+
+    static _write(link, ob, method) {
         const stringifyedOb = JSON.stringify(ob);
         const requestOptions = {
-            method: "POST",
+            method: method,
             headers: { "Content-Type": "application/json" },
             body: stringifyedOb
         };

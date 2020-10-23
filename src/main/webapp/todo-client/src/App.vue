@@ -1,16 +1,16 @@
 <template>
-  <Toolbar/>
+  <Toolbar />
   <router-view></router-view>
 </template>
 
 <script>
-import Toolbar from '@/components/Toolbar.vue'
+import Toolbar from "@/components/Toolbar.vue";
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    Toolbar
+    Toolbar,
   }
-}
+};
 </script>
 
 <style>
@@ -22,5 +22,5 @@ export default {
   height: 100%;
 }
 
-@import'~bootstrap/dist/css/bootstrap.css';
+@import "~bootstrap/dist/css/bootstrap.css";
 </style>

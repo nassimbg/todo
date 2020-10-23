@@ -1,6 +1,6 @@
 <template>
   <div id="container">
-    <form @submit.prevent="_create()">
+    <form @submit.prevent="_create($event)" class="needs-validation" novalidate>
       <div class="form-group">
         <label for="nameInput">Name</label>
         <input
@@ -9,7 +9,11 @@
           id="nameInput"
           placeholder="Enter name"
           v-model="personContainer.name"
+          required
         />
+        <div class="invalid-feedback">
+        Please provide a valid name.
+       </div>
       </div>
 
       <button type="submit" class="btn btn-dark">Create</button>
@@ -23,14 +27,33 @@ import PersonContainer from "@/container/person-container";
 
 export default {
   name: "CreatePerson",
+
   data() {
     return {
-      personContainer: new PersonContainer()
+      personContainer: new PersonContainer(),
     }
   },
   methods: {
-    _create() {
-      Fetcher.createPerson(this.personContainer);
+    _create(e) {
+      let form = e.srcElement;
+      form.classList.add('was-validated');
+
+      if (form.checkValidity()) {
+        Fetcher.createPerson(this.personContainer)
+        .then(() => {
+          return {
+            createdSuccessfully : true,
+            notificationMsg : 'Person Created!'
+          }
+        })
+        .catch(() => {
+          return {
+            createdSuccessfully : false,
+            notificationMsg : 'Unable to Create Person'
+          }
+        })
+        .then((v) => this.$emit(`notification`, v));
+      }
     }
   },
 };

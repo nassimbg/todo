@@ -1,6 +1,7 @@
 <template>
   <div id="container">
-    <form @submit.prevent="_create()">
+
+    <form @submit.prevent="_create($event)" class="needs-validation" novalidate>
       <div class="form-group">
         <label for="nameInput">Name</label>
         <input
@@ -9,15 +10,20 @@
           id="nameInput"
           placeholder="Enter name"
           v-model="taskContainer.name"
+          required
         />
+        <div class="invalid-feedback">Please provide a valid name.</div>
+      </div>
 
+      <div class="form-group">
         <select
           id="assignee"
           ref="assignee"
-          class="browser-default custom-select form-element "
+          class="browser-default custom-select form-element"
           @change="_selectedAssignee($event)"
+          required
         >
-          <option selected :value="null">Choose Assignee...</option>
+          <option selected value="">Choose Assignee...</option>
           <option
             v-for="person in persons"
             :value="person.id"
@@ -26,15 +32,18 @@
             {{ person.name }}
           </option>
         </select>
+        <div class="invalid-feedback">Please select Assignee</div>
+      </div>
 
-    
+      <div class="form-group">
         <select
           id="building"
           ref="building"
-          class="browser-default custom-select form-element "
+          class="browser-default custom-select form-element"
           @change="_selectedBuilding($event)"
+          required
         >
-          <option selected :value="null">Choose Building...</option>
+          <option selected value="">Choose Building...</option>
           <option
             v-for="building in buildings"
             :value="building.id"
@@ -43,10 +52,12 @@
             {{ building.name }}
           </option>
         </select>
+        <div class="invalid-feedback">Please select Building</div>
       </div>
 
       <button type="submit" class="btn btn-dark">Create</button>
     </form>
+    
   </div>
 </template>
 
@@ -56,6 +67,7 @@ import TaskContainer from "@/container/task-container";
 
 export default {
   name: "CreateTask",
+  
   data() {
     return {
       taskContainer: new TaskContainer(),
@@ -69,8 +81,28 @@ export default {
   },
 
   methods: {
-    _create() {
-      Fetcher.createTask(this.taskContainer);
+    _create(e) {
+      let form = e.srcElement;
+      form.classList.add("was-validated");
+
+      if (form.checkValidity()) {
+        Fetcher.createTask(this.taskContainer)
+        .then(() => {
+          return {
+            createdSuccessfully : true,
+            notificationMsg : 'Building Task!'
+          }
+        })
+        .catch(() => {
+          return {
+            createdSuccessfully : false,
+            notificationMsg : 'Unable to Create Task'
+          }
+        })
+        .then((v) => {
+          this.$emit(`notification`, v)
+        });
+      }
     },
     _getPersons() {
       return Fetcher.getAllPersons();

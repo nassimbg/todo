@@ -1,8 +1,8 @@
 export default class TaskContainer {
-    name = "";
-    assigneeId = ""
-    buildingId = ""
-    status
+    name;
+    assigneeId;
+    buildingId;
+    status;
 
     static _statusMapper = [
         {
@@ -23,7 +23,9 @@ export default class TaskContainer {
             this.id = t.id;
             this.assigneeId = t.assigneeId;
             this.buildingId = t.buildingId;
-            this.status = TaskContainer._statusMapper.find(sm => sm.queryValue == t.status);
+            this.status = TaskContainer._statusMapper.find(sm => sm.queryValue === t.status);
+        } else {
+            this.status = TaskContainer._statusMapper.find(sm => sm.queryValue === "NOT_STARTED");
         }
     }
 

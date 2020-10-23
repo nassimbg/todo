@@ -99,7 +99,10 @@ export default class Fetcher {
             body: stringifyedOb
         };
         return fetch(link, requestOptions)
-            .catch(err => console.error(`Posting ${stringifyedOb} failed`, err));
+            .catch(err => {
+                console.error(`Posting ${stringifyedOb} failed`, err);
+                throw err;
+            });
     }
 
     static _get(link) {

@@ -5,38 +5,50 @@
       <a class="nav-item nav-link tab" data-toggle="tab" href="#building" aria-controls="building" aria-selected="false" v-bind:class="{ 'active': _isActive(2) }">Building</a>
       <a class="nav-item nav-link tab" data-toggle="tab" href="#task" aria-controls="task" aria-selected="false" v-bind:class="{ 'active': _isActive(3)}">Task</a>
     </nav>
-    <div class="tab-content h-100 row" id="CreateTabs">
+    <div class="tab-content h-100 row relativeParent" id="CreateTabs">
       <div class="tab-pane fade align-self-center w-100" id="person" role="tabpanel" aria-labelledby="person-tab" v-bind:class="{ 'active': _isActive(1),  'show': _isActive(1)}">
-        <CreatePerson/>
+        <CreatePerson @notification="_activateNotification($event)"/>
       </div>
       <div class="tab-pane fade align-self-center w-100" id="building" role="tabpanel" aria-labelledby="building-tab" v-bind:class="{ 'active': _isActive(2), 'show': _isActive(2)}">
-        <CreateBuilding/>
+        <CreateBuilding @notification="_activateNotification($event)"/>
       </div>
       <div class="tab-pane fade align-self-center w-100" id="task" role="tabpanel" aria-labelledby="task-tab" v-bind:class="{ 'active': _isActive(3),  'show': _isActive(3)}">
-        <CreateTask/>
+        <CreateTask @notification="_activateNotification($event)"/>
       </div>
     </div>
+
+    <Notification id="personNotification" :show="triggerNotification" :message="notificationMsg" :success="createdSuccessfully"/>
   </section>
 </template>
 
 <script>
-import CreatePerson from './CreatePerson'
-import CreateBuilding from './CreateBuilding'
-import CreateTask from './CreateTask'
+import CreatePerson from './CreatePerson';
+import CreateBuilding from './CreateBuilding';
+import CreateTask from './CreateTask';
+import Notification from './Notification';
 
 export default {
   name: "Create",
   components: {
-    CreatePerson, CreateBuilding, CreateTask
+    CreatePerson, CreateBuilding, CreateTask, Notification
   },
   data() {
     return {
-      intiallySelected: parseInt(this.$route.params.type)
+      intiallySelected: parseInt(this.$route.params.type),
+      triggerNotification: false,
+      createdSuccessfully: false,
+      notificationMsg: ""
     }
   },
   methods: {
     _isActive(val) {
       return this.intiallySelected === val;
+    },
+    _activateNotification(e) {
+      this.createdSuccessfully = e.createdSuccessfully;
+      this.notificationMsg = e.notificationMsg;
+      this.triggerNotification = !this.triggerNotification
+      
     }
   },
   watch: {
@@ -70,5 +82,9 @@ export default {
 .tab.active{
     color: var(--dark)!important;
     background-color: var(--light)!important;
+}
+
+.relativeParent {
+  position: relative;
 }
 </style>
